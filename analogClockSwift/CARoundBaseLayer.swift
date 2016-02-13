@@ -50,8 +50,7 @@ class CARoundBaseLayer: CALayer {
     var bSolidcolorFace: Bool = false
 
     
-    func drawBezeledFace(context: CGContextRef)
-    {
+    func drawBezeledFace(context: CGContextRef) {
         CGContextSaveGState(context)
         CGContextTranslateCTM(context, CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds))
     
@@ -68,8 +67,7 @@ class CARoundBaseLayer: CALayer {
         CGContextRestoreGState(context)
     }
  
-    func processOuterBezelGradient(context: CGContextRef, startColor:UIColor, midColor:UIColor, lightColor:UIColor, endColor: UIColor, radius:CGFloat)
-    {
+    func processOuterBezelGradient(context: CGContextRef, startColor:UIColor, midColor:UIColor, lightColor:UIColor, endColor: UIColor, radius:CGFloat) {
         if(outerRimGradient == nil) {
             let gradientColors: [AnyObject] = [startColor.CGColor, midColor.CGColor, lightColor.CGColor, midColor.CGColor, endColor.CGColor]
             let locations: [CGFloat] = [ 0.0, 0.4, 0.5, 0.6, 1.0 ]
@@ -85,8 +83,7 @@ class CARoundBaseLayer: CALayer {
         }
     }
 
-    func processGradient(context: CGContextRef, startColor: UIColor, endColor: UIColor, radius:CGFloat, var gradient:CGGradientRef?)
-    {
+    func processGradient(context: CGContextRef, startColor: UIColor, endColor: UIColor, radius:CGFloat, var gradient:CGGradientRef?) {
         if(gradient == nil) {
             let gradientColors: [AnyObject] = [startColor.CGColor, endColor.CGColor]
             let flocations: [CGFloat] = [ 0.0, 1.0 ]
@@ -102,8 +99,7 @@ class CARoundBaseLayer: CALayer {
         }
     }
     
-    func processFaceSolid(context: CGContextRef, faceColor: UIColor, radius: CGFloat)
-    {
+    func processFaceSolid(context: CGContextRef, faceColor: UIColor, radius: CGFloat) {
         faceGradient = nil
         var path = CGPathCreateMutable()
         CGPathAddArc(path, nil, 0.0, 0.0, radius, 0, TWO_PI, false)
@@ -117,15 +113,13 @@ class CARoundBaseLayer: CALayer {
         CGContextFillPath(context)
     }
 
-    func removeGradients()
-    {
+    func removeGradients() {
         outerRimGradient = nil
         innerRimGradient = nil
         faceGradient = nil
     }
 
-    func drawClockText(text: String, context: CGContextRef, origin: CGPoint, var startDegree: CGFloat, radius: CGFloat, fontRef:CTFontRef, textColor: UIColor)
-    {
+    func drawClockText(text: String, context: CGContextRef, origin: CGPoint, var startDegree: CGFloat, radius: CGFloat, fontRef:CTFontRef, textColor: UIColor) {
         CGContextSaveGState(context)
         
         startDegree = 180 - (startDegree + 90.0)
@@ -155,22 +149,20 @@ class CARoundBaseLayer: CALayer {
         CGContextRestoreGState(context)
     }
     
-    func measureLine(line: CTLineRef, context: CGContextRef) ->CGSize
-    {
+    func measureLine(line: CTLineRef, context: CGContextRef) ->CGSize {
         var textHeight: CGFloat = 0.0
         var ascent:CGFloat = 0.0
         var descent:CGFloat = 0.0
         var leading:CGFloat = 0.0
         var width:Double = 0.0
-        
+
         width = CTLineGetTypographicBounds(line, &ascent,  &descent, &leading)
         
         textHeight = floor(ascent * 0.8)
         return CGSizeMake(ceil(CGFloat(width)), ceil(textHeight))
     }
     
-    func adjustLuminance(currentRGB: UIColor, luminanceFactor: CGFloat) -> UIColor
-    {
+    func adjustLuminance(currentRGB: UIColor, luminanceFactor: CGFloat) -> UIColor {
         var hue: CGFloat = 0.0
         var saturation: CGFloat = 0.0
         var brightness: CGFloat = 0.0
@@ -180,18 +172,18 @@ class CARoundBaseLayer: CALayer {
             brightness = max(min(brightness, 1.0), 0.0)
             return UIColor(hue:hue, saturation:saturation, brightness:brightness, alpha:alpha)
         }
-        
+        /*
         var white: CGFloat = 0.0
         if currentRGB.getWhite(&white, alpha:&alpha) {
             white += (luminanceFactor-1.0)
             white = max(min(white, 1.0), 0.0)
             return UIColor(white: white, alpha:alpha)
         }
+        */
         return currentRGB
     }
     
-    func drawNormalText(text:String, context:CGContextRef, origin:CGPoint, x1:CGFloat, y1:CGFloat, align:textAlignTypes, fontName:String, fontSize:CGFloat, textColor:UIColor)
-    {
+    func drawNormalText(text:String, context:CGContextRef, origin:CGPoint, x1:CGFloat, y1:CGFloat, align:textAlignTypes, fontName:String, fontSize:CGFloat, textColor:UIColor) {
         CGContextSaveGState(context)
         
         let shadowColor = UIColor(red:0.151, green:0.152, blue:0.151, alpha:1.000)
@@ -250,13 +242,12 @@ class CARoundBaseLayer: CALayer {
                 
              }
             CGContextSetTextMatrix(context, textMatrix)
-            CTRunDraw (run, context, CFRangeMake(0, 0))
+            CTRunDraw(run, context, CFRangeMake(0, 0))
         }
         CGContextRestoreGState(context)
     }
     
-    func setColorSchemeFace(face:UIColor, rim:UIColor, hands:UIColor, ticks:UIColor, numerals:UIColor, bSolidFace:Bool)
-    {
+    func setColorSchemeFace(face:UIColor, rim:UIColor, hands:UIColor, ticks:UIColor, numerals:UIColor, bSolidFace:Bool) {
         self.bSolidcolorFace = bSolidFace
         self.rimStartColor = rim
         self.rimEndColor = adjustLuminance(rimStartColor, luminanceFactor:0.5)
@@ -326,7 +317,7 @@ class CARoundBaseLayer: CALayer {
         let angleValue:CGFloat = (prevHalfWidth / lineLength) * degreesToRadian(arcDegree)
         angleArray.append(angleValue) // This is the angle to print the glyph at
         
-        //for(var lineGlyphIndex:CFIndex = 1; lineGlyphIndex < glyphCount; lineGlyphIndex++) {
+        // Calculate the printing angle for each glyph and store in angleArray
         for lineGlyphIndex in 1..<glyphCount {
             let halfWidth = widthArray[lineGlyphIndex] / 2.0
             let prevCenterToCenter = prevHalfWidth + halfWidth;
@@ -362,8 +353,9 @@ class CARoundBaseLayer: CALayer {
         // Process each Run in the line
         // A run is a consective set of Glyphs with the same attributes
         for runIndex in 0..<runCount {
-            let run: CTRunRef = runArray[runIndex]
-            let runGlyphCount:CFIndex = CTRunGetGlyphCount(run);
+            let run: CTRunRef = runArray[runIndex] // get the current glyph run ( A run is a set of consectutive glyphs with the same attributes )
+            let runGlyphCount:CFIndex = CTRunGetGlyphCount(run); // number of glyphs in this run
+            // Get the font used for this run of glyphs, in swift we must cast the CFString parameter to a void * and the return value to a CTFontRef using unsafeBitCast
             let runFont = unsafeBitCast(CFDictionaryGetValue(CTRunGetAttributes(run), unsafeBitCast(kCTFontAttributeName, UnsafePointer<Void>.self)), CTFontRef.self)
             
             // Process each Glyph in the run
@@ -376,7 +368,7 @@ class CARoundBaseLayer: CALayer {
                 let positionForThisGlyph = CGPointMake(textPosition.x - halfGlyphWidth, textPosition.y);
                 textPosition.x -= glyphWidth;
             
-                // Now rotate to popsition the glyph around the circle
+                // Now rotate to position the glyph along the arc
                 var textMatrix:CGAffineTransform = CTRunGetTextMatrix(run);
                 if(bAntiClockwise) {
                     textMatrix = CGAffineTransformScale(textMatrix,-1.0,1.0); // Reverse X axis
