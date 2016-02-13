@@ -349,6 +349,7 @@ class CARoundBaseLayer: CALayer {
             CGContextSetTextPosition(context, textPosition.x, textPosition.y);
         }
         
+        
         glyphOffset = 0;
         // Process each Run in the line
         // A run is a consective set of Glyphs with the same attributes
